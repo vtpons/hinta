@@ -79,9 +79,9 @@ For computational efficiency, we recommend restricting the dataset to include on
 
 ### 1. Phasing:
 
-Phasing is performed with [SHAPEIT5](https://odelaneau.github.io/shapeit5/) phase_common_static, using genotype data from parents and offspring. This requires a .fam file that defines parental relationships and enable phasing within families.
+Phasing is performed with [SHAPEIT5](https://odelaneau.github.io/shapeit5/) `phase_common_static`, using genotype data from parents and offspring. This requires a .fam file that defines parental relationships and enable phasing within families.
 
-An example script is provided [01_submit_phasing_jobs.sh](/scripts/01_submit_phasing_jobs), which generates and submits one SLURM job per chromosome. Each job takes a .vcf.gz file as input and outputs phased genotypes in BCF format.
+An example script is provided [01_submit_phasing_jobs.sh](/scripts/01_submit_phasing_jobs.sh), which generates and submits one SLURM job per chromosome. Each job takes a .vcf.gz file as input and outputs phased genotypes in BCF format.
 
 ## 2. Inference of transmitted/non-transmitted alleles:
 
@@ -92,7 +92,7 @@ This is the main step, which assigns transmitted and non-transmitted haplotypes 
 
 - `.haps` and `.sample` format (Oxford phased haplotype file) including data from all offspring and parents. We recommend to use [PLINK2](https://www.cog-genomics.org/plink/2.0/) to convert from VCF to haps/sample.
 
-**.sample file**: 
+`.sample file`: 
 Contains metadata for each individual, including IDs, family structure, sex, and phenotype values.
 
 File structure:
@@ -108,7 +108,7 @@ Example:
 
 > 001 LL01 0 LL02 0 2 -9
 
-**.haps file**: 
+`.haps file`: 
 Contains phased haplotype data for each SNP and individual.
 
 
@@ -161,7 +161,7 @@ After generating a genome-wide file ([06_create_genomewide_bed.sh](/scripts06_cr
 The default tile size in HINTA (150 SNPs per tile, with a 50-SNP overlap) worked well on our dataset of approximately 1.5 million genome-wide markers. It allowed accurate detection of the best matching parental haplotypes while also tracing recombination events. However, SNP density can vary substantially across genomic regions.
 
 <p align="center">
-<img src="images/density_chr6.png" width="500"/>
+<img src="images/density_chr6.png" width="600"/>
 </p>
 
 *Example: the plot above shows uneven SNP density. The peak on chromosome 6 reflects the higher density of measured SNPs in the HLA/MHC region, a feature of the Infinium GSA Multi-Ethnic Disease Array.*

@@ -9,11 +9,9 @@ This pipeline combines `Bash`, `Python`, and `R` scripts and is designed for gen
 ## Table of Contents
 - [Overview](#overview)
 - [Requirements](#requirements)
-- [Flowchart](#pipeline-structure)
-- [Pipeline Structure](#input-and-output)
-- [Running the Pipeline](#running-the-pipeline)
-- [Technical Considerations](#considerations-and-caveats)
-- [Limitations](#limitations)
+- [Flowchart](#flowchart)
+- [Pipeline Structure](#pipeline-structure)
+- [Technical Considerations](#technical-considerations)
 - [Citation](#citation)
 
 ---
@@ -52,14 +50,17 @@ For further explanation, see description paper in [Citation](#citation).
 - **Bash** (>= 4.0)
 - **Python** (>= 3.8): `pandas`, `numpy`
 - **R** (>= 4.0): `data.table`, `dplyr`
-- **PLINK2**
-- **SHAPEIT5**
-- **BCFTOOLS**
+- **[PLINK2](https://www.cog-genomics.org/plink/2.0/)**
+- **[SHAPEIT5](https://odelaneau.github.io/shapeit5/)**
+- **[BCFtools](https://samtools.github.io/bcftools/bcftools.html)**
 
 ---
 
 ## Flowchart
-![Pipeline flowchart](images/flowchart.png)
+
+<p align="center">
+<img src="images/flowchart.png" alt="Pipeline flowchart" width="250"/>
+</p>
 
 ---
 
@@ -147,7 +148,7 @@ HINTA produces one transmitted and one non-transmitted haplotype per parent-offs
 
 Because many PGS scoring tools require two columns of non-missing genotype data per individual, all individuals must be duplicated, essentially "splitting" each ID into two. If one haplotype is missing, the available one (i.e. the transmitted parental haplotype of the non-genotyped parent) is copied into both columns so that the data format remains consistent. ([05_split_and_convert_to_vcf.sh](/scripts/05_split_and_convert_to_vcf.sh))
 
-After generating a genome-wide file ([06_create_genomewide_bed.sh](/scripts06_create_genomewide_bed.sh/)) and PGS scoring ([07_plink_scoring](/scripts/07_plink_scoring.sh)), the final step is a simple script to adjust to these duplicate entries ([08_adjust_pgs_output.sh](/scripts/08_adjust_pgs_output.sh)) to combine PGSs to create a single transmitted and non-transmitted score per individual. For individuals with only one genotyped parent, the missing half of the non-transmitted score is set to missing.
+After generating a genome-wide file ([06_create_genomewide_bed.sh](/scripts06_create_genomewide_bed.sh/)) and PGS scoring ([07_plink_scoring](/scripts/07_plink_scoring.sh)), the final step is a simple script to adjust to these duplicate entries ([08_adjust_pgs_output.sh](/scripts/08_adjust_pgs_output.sh)) to combine PGSs to create a single transmitted and non-transmitted PGS per individual. For individuals with only one genotyped parent, the missing half of the non-transmitted score is set to missing.
 
 **Note**: In the final output, H1 is always referring the paternal haplotype and H2 is always referring to the maternal haplotype, for both transmitted and non-transmitted PGS. This distinction can be used for running analyses by parent-of-origin.
 
@@ -159,8 +160,10 @@ After generating a genome-wide file ([06_create_genomewide_bed.sh](/scripts06_cr
 ### SNP Density
 The default tile size in HINTA (150 SNPs per tile, with a 50-SNP overlap) worked well on our dataset of approximately 1.5 million genome-wide markers. It allowed accurate detection of the best matching parental haplotypes while also tracing recombination events. However, SNP density can vary substantially across genomic regions.
 
-> ![Chromosome 6 SNP density](images/chr6_density.png)
-> 
+<p align="center">
+<img src="images/density_chr6.png" width="500"/>
+</p>
+
 *Example: the plot above shows uneven SNP density. The peak on chromosome 6 reflects the higher density of measured SNPs in the HLA/MHC region, a feature of the Infinium GSA Multi-Ethnic Disease Array.*
 
 We recommend inspecting SNP density in your dataset before running the HINTA pipeline. High-density regions can disproportionately affect haplotype matching due to the larger number of SNPs, and matching may not work well. Consider removing such regions to maintain accuracy in transmitted/non-transmitted haplotype inference.
@@ -188,7 +191,7 @@ HINTA is not currently optimized for speed or internal parallelization. The scri
 
 ---
 
-## Citation and Acknowledgements
+## Citation
 This pipeline was developed collaboratively by Annique Claringbould, Hanna van Loo, Priscilla Kamphuis, and Victória Trindade Pons.
 
 This tutorial is based on the method described in:  

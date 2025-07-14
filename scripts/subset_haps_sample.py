@@ -1,7 +1,7 @@
 """
-This script filters the full UGLI2 phased data (haps/sample) in chunks of N=1000
+This script filters phased data (haps/sample) in chunks of N=1000
 
-Input: UGLI2 phased .haps and .sample files
+Input: Uphased .haps and .sample files
 Output: .haps and .sample datasets with around N=1000 offspring + parents
 
 Arguments: chr + path to original .haps file + path to original sample file + path to output directory

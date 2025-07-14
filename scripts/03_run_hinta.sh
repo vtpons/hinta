@@ -32,7 +32,7 @@ do
 python /path/to/hinta_script.py \\
   \${ROOT_PATH}/input/chunks/chr${i}.offspring.\$c.haps \\
   \${ROOT_PATH}/input/chunks/offspring.\$c.sample \\
-  150 \\
+  150 \\ # here you can adjust tile size
   \${ROOT_PATH}/output/chunks/chr${i}.\$c.transmitted.haps \\
   \${ROOT_PATH}/output/chunks/chr${i}.\$c.transmitted.sample \\
   \${ROOT_PATH}/output/chunks/chr${i}.\$c.nontransmitted.haps \\

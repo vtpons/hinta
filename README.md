@@ -136,7 +136,7 @@ To manage large datasets efficiently, we split the data into smaller subsets for
 We provide the scripts used in our own runs that can be adapted as needed:
 
 - [02_prep_hinta_input.sh](/scripts/02_prep_hinta_input.sh): creates parent-offspring data subsets from .haps and .sample files using [subset_haps_sample.py](/scripts/subset_haps_sample.py)
-- [03_run_hinta.sh](/scripts/03_run_hinta.sh): runs the main script [hinta_assign_tiles.py](/scripts/hinta_assing_tiles.py) in each subset 
+- [03_run_hinta.sh](/scripts/03_run_hinta.sh): runs the main script [hinta_assign_tiles.py](/scripts/hinta_assign_tiles.py) in each subset 
 - [04_merge_outputs.sh](/scripts/04_merge_outputs.sh): merges output files across subsets
    
 

@@ -83,7 +83,7 @@ Phasing is performed with [SHAPEIT5](https://odelaneau.github.io/shapeit5/) `pha
 
 An example script is provided [01_submit_phasing_jobs.sh](/scripts/01_submit_phasing_jobs.sh), which generates and submits one SLURM job per chromosome. Each job takes a .vcf.gz file as input and outputs phased genotypes in BCF format.
 
-## 2. Inference of transmitted/non-transmitted alleles:
+### 2. Inference of transmitted/non-transmitted alleles:
 
 This is the main step, which assigns transmitted and non-transmitted haplotypes by comparing offspring haplotypes to those of their genotyped parents, tile-by-tile along each chromosome. The transmitted haplotype is inferred based on the best match within each tile, allowing for occasional mismatches or recombination events. The non-transmitted haplotypes are the remaining parental haplotypes, or set to missing for the parent with missing genotype information.
 

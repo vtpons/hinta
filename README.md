@@ -18,9 +18,9 @@ This pipeline combines `Bash`, `Python`, and `R` scripts and is designed for gen
 
 ## Overview
 
-The HINTA pipeline is designed to separate transmitted and non-transmitted haplotypes in parent-offspring trios (father-mother-child) and pairs (father-child or mother-child), with the aim to compute polygenic scores and downstream modeling of genetic nurture and direct genetic transmission effects. Instead of SNP-by-SNP comparisons, HINTA uses haplotype-based matching between parents and offspring data. 
+The HINTA pipeline was designed to separate transmitted and non-transmitted haplotypes in parent-offspring trios (father-mother-child) and pairs (father-child or mother-child), with the aim to compute polygenic scores and downstream modeling of genetic nurture and direct genetic transmission effects. Instead of SNP-by-SNP comparisons, HINTA uses haplotype-based matching between parents and offspring data. 
 
-The pipeline works as such:
+The pipeline works as follows:
 
  **Phased data**: Input genotype data must be phased. We recommend to use SHAPEIT5 to phase genotypes.
 
@@ -79,7 +79,7 @@ For computational efficiency, we recommend restricting the dataset to include on
 
 ### 1. Phasing:
 
-Phasing is performed with [SHAPEIT5](https://odelaneau.github.io/shapeit5/) `phase_common_static`, using genotype data from parents and offspring. This requires a .fam file that defines parental relationships and enable phasing within families.
+Phasing is performed with [SHAPEIT5](https://odelaneau.github.io/shapeit5/) `phase_common_static`, using genotype data from parents and offspring. This requires a .fam file that defines parental relationships and enables phasing within families.
 
 An example script is provided [01_submit_phasing_jobs.sh](/scripts/01_submit_phasing_jobs.sh), which generates and submits one SLURM job per chromosome. Each job takes a .vcf.gz file as input and outputs phased genotypes in BCF format.
 
@@ -97,9 +97,9 @@ Contains metadata for each individual, including IDs, family structure, sex, and
 
 File structure:
 
-1. **First header line**: Column names (e.g., `ID_1`, `ID_2`, `missing`, `father`, `mother`, `sex`, `phenotype`)
-2. **Second header line**: Field types or defaults (e.g., `0`, `D`, `B`)
-3. **Data rows**: One line per individual, with space-delimited values matching the header columns
+1. **First header**: Column names (e.g., `ID_1`, `ID_2`, `missing`, `father`, `mother`, `sex`, `phenotype`)
+2. **Second header**: Field types or defaults (e.g., `0`, `D`, `B`)
+3. **Data rows**: One line per individual, with space-delimited values matching the headers
 
 Example:
 > ID_1 ID_2 missing father mother sex phenotype
@@ -126,7 +126,7 @@ Total columns = 5 + (2 × number of individuals)
 **Output**
 
 - Two separate `.haps`/`.sample` files with transmitted and non-transmitted haplotypes.
-- Non-transmitted haplotypes for missing parents are set to `N`.
+- Non-transmitted haplotypes for missing parents are set to the letter `N`.
 - Log files detailing processing steps and matching percentages.
 
 **Subsetting the data**
@@ -148,7 +148,7 @@ HINTA produces one transmitted and one non-transmitted haplotype per parent-offs
 
 Because many PGS scoring tools require two columns of non-missing genotype data per individual, all individuals must be duplicated, essentially "splitting" each ID into two. If one haplotype is missing, the available one (i.e. the transmitted parental haplotype of the non-genotyped parent) is copied into both columns so that the data format remains consistent. ([05_split_and_convert_to_vcf.sh](/scripts/05_split_and_convert_to_vcf.sh))
 
-After generating a genome-wide file ([06_create_genomewide_bed.sh](/scripts06_create_genomewide_bed.sh/)) and PGS scoring ([07_plink_scoring](/scripts/07_plink_scoring.sh)), the final step is a simple script to adjust to these duplicate entries ([08_adjust_pgs_output.sh](/scripts/08_adjust_pgs_output.sh)) to combine PGSs to create a single transmitted and non-transmitted PGS per individual. For individuals with only one genotyped parent, the missing half of the non-transmitted score is set to missing.
+After generating a genome-wide file ([06_create_genomewide_bed.sh](/scripts06_create_genomewide_bed.sh/)) and PGS scoring ([07_plink_scoring](/scripts/07_plink_scoring.sh)), the final step is a simple script to correct these duplicate entries ([08_adjust_pgs_output.sh](/scripts/08_adjust_pgs_output.sh)) by combining the PGSs to create a single transmitted and non-transmitted PGS per individual. For individuals with only one genotyped parent, the missing half of the non-transmitted score is set to missing.
 
 **Note**: In the final output, H1 is always referring the paternal haplotype and H2 is always referring to the maternal haplotype, for both transmitted and non-transmitted PGS. This distinction can be used for running analyses by parent-of-origin.
 
@@ -177,14 +177,14 @@ We recommend using a single chromosome to test different tile sizes by checking 
 
 ### Missing non-transmitted haplotypes
 
-Non-transmitted haplotypes are inferred using phased data from genotyped parents only. When a parent is ungenotyped in parent-offspring pairs, we cannot determine their NT contribution, so these haplotypes are set to missing.
+Non-transmitted haplotypes are inferred using phased data from genotyped parents only. In parent-offspring pairs, we cannot determine the NT contribution of the ungenotyped parent.
 
-This missingness may introduce bias, especially if it is not random (e.g., more missing fathers). In our data, missing parental information was associated with reduced variance in non-transmitted PGS for parent-offspring apirs, and reduced precision in non-transmitted effect estimates. This should be taken into account when interpreting results. To address this, methods that model missing data directly such as structural equation models using full information maximum likelihood can be considered.
+This missingness may introduce bias, especially if it is not random (e.g., more missing fathers). In our data, missing parental information was associated with reduced variance in non-transmitted PGS for parent-offspring pairs, and reduced precision in non-transmitted effect estimates. This should be taken into account when interpreting results. To address this, methods that model missing data directly such as structural equation models using full information maximum likelihood can be considered.
 
 ### No IBD or sibling-based inference
-The current implementation of HINTA does not make use of identity-by-descent (IBD) information or incorporate data from siblings. As a result, parental alleles are inferred solely from parent-offspring genotype combinations, without leveraging shared haplotypes between siblings.
+The current implementation of HINTA does not make use of identity-by-descent (IBD) information and does not incorporate data from siblings. As a result, parental alleles are inferred solely from parent-offspring genotype combinations, without leveraging shared haplotypes between siblings.
 
-Future versions may include integration with tools which enable IBD-based inference (e.g. [SNIPar](https://snipar.readthedocs.io/en/latest/tutorial.html)) which can impute missing parental data in families with multiple genotyped offspring.
+Future versions may include integration with tools that enable IBD-based inference (e.g. [SNIPar](https://snipar.readthedocs.io/en/latest/tutorial.html)) and can impute missing parental data in families with multiple genotyped offspring.
 
 ### Speed
 HINTA is not currently optimized for speed or internal parallelization. The scripts were iteratively adapted during development and may require adjustments depending on input data. For large-scale datasets, we recommend to process data in parallel across genomic regions and sample subsets.

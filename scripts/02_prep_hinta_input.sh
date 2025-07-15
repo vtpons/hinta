@@ -16,7 +16,7 @@ HINTA_INPUT_DIR=${ROOT_PATH}/hinta/input
 SCRIPTS_DIR=${ROOT_PATH}/scripts/hinta
 MAP_FILE_DIR=${ROOT_PATH}/genetic_maps/b37
 
-# Sample file: can use the same for all iomosomes 
+# Sample file: can use the same for all chromosomes 
 SAMPLE_FILE=${HINTA_INPUT_DIR}/chr22.sample
 
 for i in {1..22}; do
@@ -24,21 +24,21 @@ for i in {1..22}; do
   # Convert BCF to VCF
   bcftools convert \
     -Oz \
-    -o ${PHASED_DIR}/i${i}.phased.vcf.gz \
-    ${PHASED_DIR}/i${i}.phased.bcf
+    -o ${PHASED_DIR}/chr${i}.phased.vcf.gz \
+    ${PHASED_DIR}/chr${i}.phased.bcf
 
-  bcftools index -f ${PHASED_DIR}/i${i}.phased.vcf.gz
+  bcftools index -f ${PHASED_DIR}/chr${i}.phased.vcf.gz
 
   # Convert VCF to haps/sample
   plink2 \
-    --vcf ${PHASED_DIR}/i${i}.phased.vcf.gz \
+    --vcf ${PHASED_DIR}/chr${i}.phased.vcf.gz \
     --export haps \
-    --out ${HINTA_INPUT_DIR}/i${i}.phased
+    --out ${HINTA_INPUT_DIR}/chr${i}.phased
 
   # Create subsets (sample files with N=1000 each) 
   python ${SCRIPTS_DIR}/subset_phased_data.py \
     ${i} \
-    ${HINTA_INPUT_DIR}/i${i}.phased.haps \
+    ${HINTA_INPUT_DIR}/chr${i}.phased.haps \
     ${SAMPLE_FILE} \
     ${HINTA_INPUT_DIR}/subsets/
 done
